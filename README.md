@@ -350,7 +350,7 @@ You can set the table file type to be one of the following:
 *HTML* files are very readable in a web browser.  This is the default table file type for LGT SACT.
 
 To change the format of the output table files, change the value of the parameter `TableType` in the `LGT_Output.piper` file in the `resources/pipeline/` directory.
-```json
+```
 // You can change the file type for output tables to one of the following: BSV, CSV, TAB, or HTML.
 set TableType=HTML
 add MedTimeTableFileWriter
