@@ -1,0 +1,20 @@
+//  This piper file just listens to a queue and saves cas information to output files.
+
+
+// Get cas from Artemis.
+reader PbjReceiver ReceiveQueue=writeOutputQ
+
+// Save tables with information from LGT.
+package org.healthnlp.lg.timelines
+
+add MedTimeJsonFileWriter
+
+// You can change the file type for output tables to one of the following: BSV, CSV, TAB, or HTML.
+set TableType=HTML
+add MedTimeTableFileWriter
+
+// The MedTimeMentionFileWriter can be useful for debugging, but is not used in a normal workflow
+//add MedTimeMentionFileWriter
+
+// Perform steps to stop the pbj pipeline, including stopping the Artemis broker
+load PbjStopper

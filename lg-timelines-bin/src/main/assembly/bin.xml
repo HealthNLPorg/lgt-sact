@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<assembly
+        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+    <id>bin</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>/lg-timelines-${project.version}</baseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <includes>
+                <include>org.healthnlp:lg-timelines-j</include>
+            </includes>
+            <unpack>false</unpack>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+
+        <dependencySet>
+            <includes>
+                <include>org.apache.logging.log4j:log4j-slf4j2-impl</include>
+            </includes>
+            <outputDirectory>config</outputDirectory>
+            <unpack>false</unpack>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.parent.basedir}/resources</directory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <outputDirectory>resources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}/config</directory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <outputDirectory>config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}/python</directory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <outputDirectory>python</outputDirectory>
+        </fileSet>
+<!--        <fileSet>-->
+<!--            <directory>${project.parent.basedir}/src/main/resources</directory>-->
+<!--            <fileMode>755</fileMode>-->
+<!--            <directoryMode>755</directoryMode>-->
+<!--            <outputDirectory>resources</outputDirectory>-->
+<!--        </fileSet>-->
+        <fileSet>
+            <directory>${project.basedir}/src/main/bin</directory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+<!--        <fileSet>-->
+<!--            <directory>${project.parent.basedir}/lg-timelines-py</directory>-->
+<!--            <fileMode>755</fileMode>-->
+<!--            <directoryMode>755</directoryMode>-->
+<!--            <outputDirectory>python/lg-timelines-py</outputDirectory>-->
+<!--        </fileSet>-->
+<!--        <fileSet>-->
+<!--            <directory>${project.parent.basedir}/pbj-langgraph-py</directory>-->
+<!--            <fileMode>755</fileMode>-->
+<!--            <directoryMode>755</directoryMode>-->
+<!--            <outputDirectory>python/pbj-langgraph-py</outputDirectory>-->
+<!--        </fileSet>-->
+<!--        <fileSet>-->
+<!--            <directory>${project.parent.basedir}/pbj-llm-tools-py</directory>-->
+<!--            <fileMode>755</fileMode>-->
+<!--            <directoryMode>755</directoryMode>-->
+<!--            <outputDirectory>python/pbj-llm-tools-py</outputDirectory>-->
+<!--        </fileSet>-->
+        <fileSet>
+            <directory>${project.parent.basedir}</directory>
+            <outputDirectory/>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>README.md</include>
+                <include>LICENSE</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

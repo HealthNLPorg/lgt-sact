@@ -1,0 +1,12 @@
+
+// You can change the path to the prompt in two ways:
+//   1. Use  "set prompt_path=MyPathToPromptFile"
+//   2. Use  "++prompt MyPathToPromptFile" at the end of your command line.
+cli prompt_path=prompt
+
+// You need a huggingface token for private models / repos.
+// You can change the path to the prompt in two ways:
+//   1. Use  "set hf_token=MyHuggingFaceToken"
+//   2. Use  "++hf_token MyHuggingFaceToken" at the end of your command line.
+cli hf_token=hf_token
+

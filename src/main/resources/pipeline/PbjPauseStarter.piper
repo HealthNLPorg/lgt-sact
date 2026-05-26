@@ -1,0 +1,36 @@
+//  This is a piper file that will perform initial steps required for running a ctakes-pbj pipeline.
+//  It is a slight modification of the standard PBJ PbjStarter.piper in that it doesn't pip pbj
+//  and pauses for 30 seconds after starting Artemis to allow it enough initialization time.
+//
+// Add "load PbjPauseStarter" to the beginning of your piper file.
+//
+//  This piper will start the Apache Artemis broker pointed to by the -a parameter on the command line.
+//  It will pause for 30 seconds to allow artemis to fully launch.
+//
+
+// Set the command line parameter -a to accept the directory of the Artemis broker.
+cli ArtemisBroker=a
+// Set the command line parameter -v to accept the directory of the Python environment.
+cli VirtualEnv=v
+
+// Write nice big banners when ctakes starts and finishes.
+set WriteBanner=yes
+
+//
+// Start the Artemis broker and pause 30 seconds.  Normally this pause is 5 seconds, but waiting is better.
+//
+// Important: You must create an Artemis Broker before running.
+// See "Creating a Broker Instance" at https://activemq.apache.org/components/artemis/documentation/1.0.0/running-server.html
+// The ArtemisBroker must point to the directory of the broker that you create.
+//
+
+// If we don't pip pbj then we need to pause after starting Artemis, giving it time to initialize.
+// If Artemis isn't online and running then senders and receivers fail.
+add ArtemisStarter Pause=30
+
+// Add the Finished Logger for some run statistics.
+addLast util.log.FinishedLogger
+
+// Force a stop, just in case some external process is trying to stay connected.
+// To disable the forced exit, use "set ForceExit=no"
+addLast ExitForcer Pause=3

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.healthnlp</groupId>
+        <artifactId>langgraph-timelines</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <name>PBJ LangGraph Tools Python</name>
+    <description>Tools that can act as a bridge between cTAKES-PBJ and LangGraph.</description>
+    <organization>
+        <name>HealthNLP</name>
+        <url>https://github.com/HealthNLPorg</url>
+    </organization>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <artifactId>pbj-langgraph-py</artifactId>
+    <properties>
+        <pbj_lg.compile.dir>${project.parent.basedir}/python/pbj_langgraph_py</pbj_lg.compile.dir>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>pip-pbj-langgraph</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${pbj_lg.compile.dir}</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!--	Copy resources that should be user-editable for testing without requiring recompiling.  -->
+                                <!--	This makes it much easier for developers to find resources. -->
+                                <!--	Permanent edits must still be made in src/main/resources -->
+                                <id>copy-py-resources</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}</directory>
+                                        </resource>
+                                    </resources>
+                                    <outputDirectory>${pbj_lg.compile.dir}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pip-pbj-langgraph-py</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-u</argument>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>${pbj_lg.compile.dir}/</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

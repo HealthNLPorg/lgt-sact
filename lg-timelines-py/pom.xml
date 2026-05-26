@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.healthnlp</groupId>
+        <artifactId>langgraph-timelines</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <name>LangGraph Timelines Python</name>
+    <description>A LangGraph-based pipeline for extracting and normalizing temporal information from clinical/patient notes using fine-tuned LLMs.</description>
+    <organization>
+        <name>HealthNLP</name>
+        <url>https://github.com/HealthNLPorg</url>
+    </organization>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <artifactId>lg-timelines-py</artifactId>
+    <properties>
+        <compile.dir>${project.parent.basedir}/python/lg_timelines_py</compile.dir>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>pip-lg-timelines</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${compile.dir}</directory>
+                                    <followSymlinks>false</followSymlinks>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!--	Copy resources that should be user-editable for testing without requiring recompiling.  -->
+                                <!--	This makes it much easier for developers to find resources. -->
+                                <!--	Permanent edits must still be made in src/main/resources -->
+                                <id>copy-py-resources</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}</directory>
+                                        </resource>
+                                    </resources>
+                                    <outputDirectory>${compile.dir}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pip-lg-timelines-py</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-u</argument>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>${compile.dir}/</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

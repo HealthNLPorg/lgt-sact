@@ -1,0 +1,18 @@
+
+package org.healthnlp.lg.timelines
+
+// Get CAS sent by other process.
+reader PbjReceiver ReceiveQueue=normalizeTimeQ
+
+// Run TimeNorm normalization.
+add TimeNormalizationRunner
+
+// Send CAS to Artemis at the specified queue.
+add PbjJmsSender SendQueue=timeNormalizedQ
+
+// Add the Finished Logger for some run statistics.
+add util.log.FinishedLogger
+
+// Force a stop, just in case some external process is trying to stay connected.
+// To disable the forced exit, use "set ForceExit=no"
+addLast ExitForcer Pause=3

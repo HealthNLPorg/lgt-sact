@@ -1,0 +1,26 @@
+{
+  "PT001234": [
+    ["Anastrozole", "BEGINS-ON", "2023-10-15"],
+    ["Cyclophosphamide", "ENDS-ON", "2023-09-18"],
+    ["Doxorubicin", "ENDS-ON", "2023-09-18"],
+    ["Paclitaxel", "BEGINS-ON", "2023-10-02"],
+    ["Paclitaxel", "CONTAINS-1", "2023-11-14"],
+    ["Paclitaxel", "ENDS-ON", "2023-11-27"],
+    ["chemotherapy", "BEGINS-ON", "2023-07-10"]
+  ],
+  "PT003456": [
+    ["carboplatin", "BEGINS-ON", "2024-01-08"],
+    ["carboplatin", "CONTAINS-1", "2024-03-04"],
+    ["chemotherapy", "CONTAINS-1", "2024-02-12"],
+    ["paclitaxel", "BEGINS-ON", "2024-01-08"],
+    ["paclitaxel", "CONTAINS-1", "2024-03-04"]
+  ],
+  "PT005678": [
+    ["Dabrafenib", "BEGINS-ON", "2023-09-15"],
+    ["Ipilimumab", "BEGINS-ON", "2022-07-20"],
+    ["Ipilimumab", "CONTAINS-1", "2022-10-05"],
+    ["Nivolumab", "BEGINS-ON", "2022-07-20"],
+    ["Nivolumab", "CONTAINS-1", "2022-10-05"],
+    ["Trametinib", "BEGINS-ON", "2023-09-15"]
+  ]
+}

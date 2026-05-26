@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.healthnlp</groupId>
+        <artifactId>langgraph-timelines</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <name>PBJ Torch and CUDA Pipper</name>
+    <description>Can pip Torch and CUDA if the user chooses to do so.  Uses OS type for execution.</description>
+    <organization>
+        <name>HealthNLP</name>
+        <url>https://github.com/HealthNLPorg</url>
+    </organization>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <artifactId>pip-torch-cuda</artifactId>
+
+    <!--  Specify the version of cuda to use with -Dcuda.version=<version>  -->
+    <!--      where version is 126, 128, 130, or cpu.  On Linux, cuda.version can also be rocm72  -->
+    <!--  If -Dcuda.version is not specified, the default behavior is CPU on Windows and CUDA 13.0 on Linux.  -->
+    <!--  If you are using the CPU you should not run the profile pip-cuda. -->
+
+    <properties>
+        <nvidia.pyindex>nvidia-pyindex</nvidia.pyindex>
+        <nvidia.cuda>nvidia-cuda-runtime</nvidia.cuda>
+        <torch.pip.args>-m pip install torch torchvision</torch.pip.args>
+        <torch.url>--index-url https://download.pytorch.org/whl/</torch.url>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>windows-cuda-12.6</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>126</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using windows and -Dcuda.version=126, use cuda and torchvision for the given version. -->
+                <nvidia.cuda>nvidia-cuda-runtime-cu12</nvidia.cuda>
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cu126</torch.pip.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-cuda-12.8</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>128</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using windows and -Dcuda.version=128, use cuda and torchvision for the given version. -->
+                <nvidia.cuda>nvidia-cuda-runtime-cu12</nvidia.cuda>
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cu128</torch.pip.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-cuda-13.0</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>130</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using windows and -Dcuda.version=130, use cuda and torchvision for the given version. -->
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cu130</torch.pip.args>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linux-cuda-12.6</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>126</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using linux and -Dcuda.version=126, use cuda and torchvision for the given version. -->
+                <nvidia.cuda>nvidia-cuda-runtime-cu12</nvidia.cuda>
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cu126</torch.pip.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-cuda-12.8</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>128</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using linux and -Dcuda.version=128, use cuda and torchvision for the given version. -->
+                <nvidia.cuda>nvidia-cuda-runtime-cu12</nvidia.cuda>
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cu128</torch.pip.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-cuda-cpu</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>cpu</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using linux and -Dcuda.version=cpu, use torchvision with for cpu. -->
+                <!-- If you are using the CPU you should not run the profile pip-cuda. -->
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}cpu</torch.pip.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-cuda-rocm7.2</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+                <property>
+                    <name>cuda.version</name>
+                    <value>rocm72</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If using linux and -Dcuda.version=rocm72, use torchvision with rocm7.2. -->
+                <torch.pip.args>-m pip install torch torchvision ${torch.url}rocm7.2</torch.pip.args>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>pip-cuda</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pip-uninstall-torch</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>uninstall</argument>
+                                        <argument>-y</argument>
+                                        <argument>torch</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pip-old-pip</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>-U</argument>
+                                        <!-- pyindex uses an internal function in pip that was removed in pip 25.3 -->
+                                        <!-- linux mvn doesn't like quotes around the "pip==25.1". Windows did? -->
+                                        <argument>pip==25.1</argument>
+<!--                                        <argument>wheel</argument>-->
+<!--                                        <argument>setuptools</argument>-->
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pip-nvidia-pyindex</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>${nvidia.pyindex}</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>pip-nvidia-cuda</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>${nvidia.cuda}</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!-- Upgrade pip for other packages - we only needed pip 25.1 for nvidia -->
+                                <id>pip-upgrade-pip</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>-m</argument>
+                                        <argument>pip</argument>
+                                        <argument>install</argument>
+                                        <argument>--upgrade</argument>
+                                        <argument>pip</argument>
+                                    </arguments>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>pip-torch</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pip-torch</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <commandlineArgs>${torch.pip.args}</commandlineArgs>
+                                    <workingDirectory>${python.venv}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

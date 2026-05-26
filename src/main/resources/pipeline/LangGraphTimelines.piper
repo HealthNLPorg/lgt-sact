@@ -1,0 +1,94 @@
+#
+#  This is an example piper file that will spin up a complete pbj pipeline.
+#
+#  This piper will start the Apache Artemis broker pointed to by the -a parameter on the command line.
+#  It will pause for 5 seconds to allow Artemis to fully launch.
+#
+#  This piper will then launch another instance of Apache cTAKES.
+#  That instance of cTAKES will run the third and final bit of the entire PBJ pipeline.
+#
+#  This piper will then launch a python PBJ pipeline that runs the primary function of LangGraphTimelines.
+#
+
+#
+#  To run this pipeline from the command line, use the parameters:
+#  -p LangGraphTimelines
+#  -v {python environment Directory}    (optional)
+#  -a {Artemis Broker Directory}
+#  -i {Input Document Directory}
+#  -o {Output Directory}
+#  ++hf_token {HuggingFace Token}
+#
+#  If the environment variable HF_TOKEN is set then ++hf_token is not needed.
+
+//////////////////////////////////////////////////
+//   Set up run parameters and start PBJ.
+//////////////////////////////////////////////////
+
+// Parameters can be set in this piper file.
+// These are optional settings that can be site, cohort, corpus, or run-specific.
+load LGT_Parameters
+
+// Sets up required parameters, starts your Artemis Broker.
+// This has a significant pause time to allow Artemis to fully initialize.
+load PbjPauseStarter
+
+//      Since we don't pip pbj or anything else, give artemis time to initialize!
+
+//////////////////////////////////////////////////
+//   Start external processes:
+//   start LGT, start cTAKES time normalizer, start cTAKES Output Writer.
+
+set LGT_PY=lg_timelines.lgt_pipeline
+add PythonRunner Command="-m $LGT_PY -rq docInputQ -sq pingReadyQ -wq writeOutputQ -hf $hf_token" LogFile=lgt_main_py.log
+
+
+// You can also change the command to use the following LGT python parameters (rather than defaults):
+//   --doc_input_queue
+//   --read_ready_queue
+//   --normalize_time_queue
+//   --time_normalized_queue
+//   --write_output_queue
+//   --tlinks_adapter
+//   --base_llm_name
+//   --hf_token
+//   --tlinks_batch_size
+//   --use_cpu
+
+//
+// Start another instance of cTAKES, running a pipeline to normalize TimeMentions.
+// $OutputDirectory will substitute the value of this cTAKES pipeline's value for OutputDirectory.
+// $ArtemisBroker will substitute the value of this cTAKES pipeline's value for ArtemisBroker.
+//
+add CtakesRunner Pipeline="-p pipeline/NormalizeTimes -o $OutputDirectory -a $ArtemisBroker"
+
+//
+// Start another instance of cTAKES, running a pipeline to write output and shut down when complete.
+// $OutputDirectory will substitute the value of this cTAKES pipeline's value for OutputDirectory.
+// $ArtemisBroker will substitute the value of this cTAKES pipeline's value for ArtemisBroker.
+//
+add CtakesRunner Pipeline="-p pipeline/LGT_Output -o $OutputDirectory -a $ArtemisBroker"
+
+
+//////////////////////////////////////////////////
+// The pipeline run by this instance of cTAKES.
+//////////////////////////////////////////////////
+
+// FileTreeReader is used by default to read documents from text files.
+
+// Load a simple token processing pipeline from another pipeline file.
+load DefaultTokenizerPipeline
+// We can do more cTAKES stuff here if we like.  By default we do not.
+//load DictionarySubPipe
+
+// Add annotation engines specific to an institution that created the corpus.
+load InstitutePipe
+
+// Send CAS to Artemis at the specified queue.  Send stop signal when processing has finished.
+add PbjJmsSender SendQueue=docInputQ SendStop=yes
+
+// We can do more cTAKES stuff here if we like.  It never hurts to parallel process.
+
+// Doesn't do anything.  It is a kludge to make this pipeline wait until somebody can receive a new cas.
+// Otherwise, this pipeline could read 100 docs before an LLM finishes processing 1, and the queue will be overwhelmed.
+add PbjReceiverAE ReceiveQueue=pingReadyQ

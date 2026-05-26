@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langgraph-timelines"
+version = "1.0.0"
+license = "Apache-2.0"
+authors = [
+    { name="BCH Health NLP Lab", email="jiarui.yao@childrens.harvard.edu" },
+]
+description = "A LangGraph-based pipeline for extracting and normalizing temporal information from clinical/patient notes using fine-tuned LLMs."
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+#    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pbj_langgraph",
+    "protobuf",
+    "torch",
+    "peft",
+    "bitsandbytes>=0.46.1",
+    "pandas>=2.0.0",
+    "transformers>=4.0.0",
+]
+[project.urls]
+"Homepage" = "https://github.com/HealthNLPorg/langgraph-timelines"
+"Bug Tracker" = "https://github.com/HealthNLPorg/langgraph-timelines/issues"

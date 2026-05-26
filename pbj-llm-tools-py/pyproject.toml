@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbj-llm-tools"
+version = "1.0.0"
+license = "Apache-2.0"
+authors = [
+    { name="BCH Health NLP Lab", email="sean.finan@childrens.harvard.edu" },
+]
+description = "Tools that can act as a bridge between cTAKES-PBJ and LLM i/o."
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+#    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "ctakes_pbj",
+]
+[project.urls]
+"Homepage" = "https://github.com/HealthNLPorg/pbj-llm-tools"
+"Bug Tracker" = "https://github.com/HealthNLPorg/pbj-llm-tools/issues"

@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <name>LangGraph Timelines</name>
+    <description>A LangGraph-based pipeline for extracting and normalizing temporal information from clinical/patient
+        notes using fine-tuned LLMs.
+    </description>
+    <organization>
+        <name>HealthNLP</name>
+        <url>https://github.com/HealthNLPorg</url>
+    </organization>
+    <modules>
+        <!-- place langgraph-timelines-j first as it has pbj/user-resources dependencies including pbj python. -->
+        <module>lg-timelines-j</module>
+        <module>pip-torch-cuda</module>
+        <module>pbj-llm-tools-py</module>
+        <module>pbj-langgraph-py</module>
+        <module>lg-timelines-py</module>
+        <module>lg-timelines-bin</module>
+    </modules>
+    <artifactId>langgraph-timelines</artifactId>
+    <groupId>org.healthnlp</groupId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <properties>
+        <!--  You should always use a virtual environment (venv) when running python apps.  -->
+        <!--  Activate your venv before running maven and before running langgraph-timelines.  -->
+        <!--  Override python.venv in your mvn command with "-Dpython.venv=/usr/bin/python" or other dir if needed. -->
+        <!--    e.g.  ../.venv  /usr/bin/python/envs/myenv   -->
+        <python.venv>../.venv</python.venv>
+        <maven.compiler.version>3.13.0</maven.compiler.version>
+        <java.jdk.version>17</java.jdk.version>
+        <ctakes.version>7.0.0-SNAPSHOT</ctakes.version>
+        <skip.assembly>true</skip.assembly>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <url>https://github.com/HealthNLPorg/langgraph-timelines</url>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>Jryao</id>
+            <name>Jiarui Yao</name>
+            <email>jiarui.yao@childrens.harvard.edu</email>
+            <organization>HealthNLP</organization>
+            <organizationUrl>https://github.com/HealthNLPorg</organizationUrl>
+        </developer>
+        <developer>
+            <id>seanfinan</id>
+            <name>Sean Finan</name>
+            <organization>HealthNLP</organization>
+            <organizationUrl>https://github.com/HealthNLPorg</organizationUrl>
+        </developer>
+    </developers>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.github.download-maven-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.6.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/resources</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/config</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/python</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>${project.basedir}/..</directory>
+                            <includes>cTAKES.error.log</includes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.jdk.version}</source>
+                    <target>${java.jdk.version}</target>
+                    <release>${java.jdk.version}</release>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!--	Copy resources that should be user-editable for testing without requiring recompiling.  -->
+                        <!--	This makes it much easier for developers to find resources. -->
+                        <!--	Permanent edits must still be made in src/main/resources -->
+                        <id>copy-main-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.basedir}/resources</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

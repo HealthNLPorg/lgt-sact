@@ -1,0 +1,6 @@
+// Can be empty (do nothing) or have annotation engines (and/or reader) for institution-specific docs.
+
+
+// Add the University of Pittsburgh Header Parser that sets docTime and docType.
+package org.apache.ctakes.institute.pitt
+add PittHeaderParser

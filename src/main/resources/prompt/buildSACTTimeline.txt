@@ -1,0 +1,51 @@
+
+You are an experienced medical annotator tasked with extracting systemic anticancer therapy (SACT) events from a given clinical note.
+
+WHAT A SACT IS:
+SACT encompasses medications used in traditional cytotoxic chemotherapy, endocrine therapy, targeted therapy, and immunotherapy. SACT may appear in generic names (e.g., Anastrozole), brand names (e.g., Arimidex), or combined names (e.g., TCH). Non-specific SACT mentions such as "chemotherapy" or "chemo" should also be included. Exclude therapies, medications, and diagnostic procedures used not for anticancer purposes, such as dietary supplements and biopsies. Exclude therapy candidates that you don't know what they are or aren't sure if they are SACT.
+
+WHAT YOU SHOULD EXTRACT:
+You should only extract SACT events that are explicitly associated with specific time expressions. Here are some format examples of time expressions you are expected to extract: "December 27, 2011", "May 21st, 2013", "7/20/2012", "today", "3 weeks ago", "1 year". Ignore nonspecific time mentions such as cycle or dose numbers (e.g., "cycle 1 of 6" and "1/6 dose") and ambiguous relative time (e.g., "midway through" or "at the same time as" another event). Exclude SACT mentions without an associated time.
+
+Additionally, for each event, select a relation label from BEGINS-ON, ENDS-ON, and CONTAINS-1 to indicate the relation between the SACT and its time based on the note's language. CONTAINS-1 means the SACT happened at a specific time; if the note explicitly mentions the start or end of an event, use BEGINS-ON or ENDS-ON. For example, if the note says "She received Herceptin on May 21st, 2013", your extracted event will be "Herceptin", "CONTAINS-1", "May 21st, 2013"; if the note says "Start ipilimumab on today's date", your extracted event will be "ipilimumab", "BEGINS-ON", "today".
+
+If a SACT is associated with multiple time points, extract them as separate events. For example, if the note says "Herceptin was initiated on 12/27/2011 and completed on April 10, 2012", you should extract two events: one is "Herceptin", "BEGINS-ON", "12/27/2011" and the other is "Herceptin", "ENDS-ON", "April 10, 2012". Similarly, if multiple SACTs are associated with the same date, you should also extract them as separate events.
+
+HOW YOU SHOULD FORMAT YOUR RESPONSE:
+SACT names and their associated time expressions should be kept exactly as they appear, even if there is a typo. Do not alter them, normalize the time expression, or infer the exact date. For example, if a SACT event appears in the note as "Alibercept received yesterday", your extracted event will be "Alibercept", "CONTAINS-1", "yesterday".
+
+Do not combine SACT mentions that refer to the same therapy but appear in different names, even if one appears in parentheses as the alternative name for another: extract them separately. For example, if there are two SACT events, "il-2", "12", and "interleukin-2", and all have corresponding time expressions, treat them as three separate SACT events: if the note says "TRASTUZUMAB (HERCEPTIN) received today", you should extract two events: one is "TRASTUZUMAB", "CONTAINS-1", "today", and the other is "HERCEPTIN", "CONTAINS-1", "today".
+
+If multiple SACTs are administered together, treat them as separate events. For example, for "Doxorubicin/Cyclophosphamide" you should extract 2 events, one for Doxorubicin and the other for Cyclophosphamide. However, if a SACT name is already a combined treatment name (e.g., TCH), treat it as a single event.
+
+Ignore supplementary descriptors of SACT names, such as dose (e.g., "high dose") and administration method (e.g., "IV"). For non-specific SACT like "chemotherapy" or "chemo", ignore their descriptors, such as "adjuvant" and "neoadjuvant".
+
+Your response must be a JSON array under the following schema:
+
+{
+  "type": "array",
+  "description": "An array of SACT events extracted from the clinical note.",
+  "items": {
+    "type": "object",
+    "properties": {
+      "SACT": {
+        "description": "A SACT name extracted as it is.",
+        "type": "string"
+      },
+      "relation": {
+        "description": "The relation between the SACT and its associated time expression. Must be one of BEGINS-ON, ENDS-ON, and CONTAINS-1.",
+        "type": "string"
+      },
+      "time": {
+        "description": "The time expression associated with the SACT, extracted as it is.",
+        "type": "string"
+      }
+    },
+    "required": ["SACT", "relation", "time"]
+  }
+}
+
+If there is no SACT event in the clinical note, return an empty array.
+
+Now, extract SACT events from the following clinical note:
+

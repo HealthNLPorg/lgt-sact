@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbj-langgraph"
+version = "1.0.0"
+license = "Apache-2.0"
+authors = [
+    { name="BCH Health NLP Lab", email="sean.finan@childrens.harvard.edu" },
+]
+description = "Tools that can act as a bridge between cTAKES-PBJ and Langgraph."
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+#    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pbj-llm-tools",
+    "langgraph",
+]
+[project.urls]
+"Homepage" = "https://github.com/HealthNLPorg/pbj-langgraph"
+"Bug Tracker" = "https://github.com/HealthNLPorg/pbj-langgraph/issues"
