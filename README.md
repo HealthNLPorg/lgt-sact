@@ -359,7 +359,7 @@ add MedTimeTableFileWriter
 ### Expected Output
 
 The `sample_output/` directory contains sample outputs for the sample notes.
-Please note that SACT LGT has been designed to adapt its LLM for GPUs of different RAM sizes to run on smaller systems, so results may be different.
+Please note that LGT SACT has been designed to adapt its LLM for GPUs of different RAM sizes to run on smaller systems, so results may be different.
 In addition, LLMs are by nature non-deterministic, meaning that results may not always be identical between repeated runs.
 
 ### Empty output files
@@ -374,6 +374,10 @@ If you do not have a GPU, make sure you are running the script `runLGT_CPU.sh` a
 
 
 ## Acknowledgments
+
+This software was created as part of the **[Cancer Deep Phenotyping (DeepPhe)](https://deepphe.github.io/)** project, 
+supported by the [National Cancer Institute's Information Technology for Cancer Research (ITCR) initiative](https://www.cancer.gov/about-nci/organization/cssi/research/itcr) 
+(Grant #U24CA248010).
 
 This system re-implements the winning approach from the [ChemoTimeline shared task](https://aclanthology.org/2025.clinicalnlp-1.1/), originally developed by UW-BioNLP.  
 Our implementation follows their content extraction approach with minor changes.  
