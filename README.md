@@ -1,8 +1,8 @@
-# Systemic Anti-Cancer Therapy (SACT) Timeline Extractor.  
+# Systemic Anticancer Therapy (SACT) Timeline Extractor.  
 **LangGraph Timelines (LGT)**, SACT release (LGT SACT).
 
 A [LangGraph](https://www.langchain.com/langgraph) and [Apache cTAKES-PBJ](https://github.com/apache/ctakes) -based pipeline for extracting and normalizing temporal information from clinical/patient notes using fine-tuned LLMs.  
-Specifically, Systemic Anti-Cancer Therapy (SACT) Timelines.
+Specifically, Systemic Anticancer Therapy (SACT) Timelines.
 
 ## Overview
 
@@ -204,7 +204,7 @@ output root/                           # Output directory.  Point to this direct
 In the json, there is an entry for each patient consisting of the patient ID and a list of the patient's SACT events, their relations to times (TLinks), and the normalized form of times. 
 
 **SACT Event**  
-The Systemic Anti-Cancer Therapy (SACT) in output files is reported by the LLM, and may be exact text from the document or, rarely, some variant thereof.
+The Systemic Anticancer Therapy (SACT) in output files is reported by the LLM, and may be exact text from the document or, rarely, some variant thereof.
 The text may be the name of a medication, an acronym for a combination therapy, or descriptive categories such as "radiation" or "chemotherapy".
 
 **TLink Type**  
