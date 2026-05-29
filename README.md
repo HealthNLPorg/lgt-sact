@@ -15,7 +15,8 @@ This project implements a multi-stage workflow that extracts temporal triplets (
 - Java 17.x
 - [Apache Maven](https://maven.apache.org/) 3.x
 - [Apache Artemis](https://artemis.apache.org/components/artemis/) 
-- Permission (token) to access the [HealthNLP HuggingFace](https://huggingface.co/HealthNLP) [chemotimelines model](https://huggingface.co/HealthNLP/finetuned_qwen3_14b_lora_chemotimelines) 
+- [HuggingFace Account](https://huggingface.co/welcome)
+- [Access token](https://huggingface.co/docs/hub/en/security-tokens) for the [HealthNLP](https://huggingface.co/HealthNLP) [tuned model](https://huggingface.co/HealthNLP/finetuned_qwen3_14b_lora_chemotimelines) 
 
 A GPU with more than 32GB RAM is required to obtain the best results, running with full 16-bit floating point accuracy.
 GPUs with less memory can still be used.  A GPU with more than 18GB RAM is required to run with 8-bit integer accuracy.
@@ -96,6 +97,11 @@ After running the build script there will be a new directory in `lgt source root
 You can run the project within this directory, but it is recommended that you move the `lg-timelines-1.0.0-bin/` directory to another location. 
 The behavior of the runnable binary can be customized by modifying the [piper files](https://github.com/apache/ctakes/wiki/Piper-Files) in the `resources/pipeline/` directory, 
 and moving the binary to another location can help prevent accidental loss of customizations upon rebuilding. 
+
+The first time you run LGT SACT, it will fetch and install the [Qwen3-14b](https://huggingface.co/Qwen/Qwen3-14B) LLM from [HuggingFace](https://huggingface.co/).  
+It will also download the SACT [fine-tuned model](https://huggingface.co/HealthNLP/finetuned_qwen3_14b_lora_chemotimelines).  
+Before you run the first time, you may need to register and obtain a [HuggingFace token](https://huggingface.co/docs/hub/en/security-tokens) for its use.  
+You can visit the page on the [fine-tuned model](https://huggingface.co/HealthNLP/finetuned_qwen3_14b_lora_chemotimelines) for access.
 
 ## Running
 
@@ -308,7 +314,7 @@ The text may be the name of a medication, an acronym for a combination therapy, 
 **Temporal Relation**  
 The type of temporal relation between a SACT and Time.
 - Begins-On : SACT begins on the specified Time
-- Contains-1 : SACT is inverse contains the specified time.
+- Contains-1 : SACT *inverse contains* the specified time.
 - Ends-On : SACT ends on the specified Time.
 
 It may be easier to think of `Contains-1` as "*occurs at*" or "*occurs during*" rather than "*inverse contains*".  
@@ -379,7 +385,7 @@ This software was created as part of the **[Cancer Deep Phenotyping (DeepPhe)](h
 supported by the [National Cancer Institute's Information Technology for Cancer Research (ITCR) initiative](https://www.cancer.gov/about-nci/organization/cssi/research/itcr) 
 (Grant #U24CA248010).
 
-This system re-implements the winning approach from the [ChemoTimeline shared task](https://aclanthology.org/2025.clinicalnlp-1.1/), originally developed by UW-BioNLP.  
+This system re-implements the winning approach from the **[ChemoTimeline shared task](https://aclanthology.org/2025.clinicalnlp-1.1/)**, originally developed by UW-BioNLP.  
 Our implementation follows their content extraction approach with minor changes.  
 The system was architected for ease of use and adaptation and followed current state of the art in Agent design.
 
