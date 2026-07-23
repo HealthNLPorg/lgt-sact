@@ -11,7 +11,7 @@ This project implements a multi-stage workflow that extracts temporal triplets (
 ## Prerequisites
 
 - A system with a [CUDA-enabled GPU](https://developer.nvidia.com/cuda/gpus)
-- Python 3.10 or later
+- A fresh virtual environment with Python 3.10
 - Java 17.x
 - [Apache Maven](https://maven.apache.org/) 3.x
 - [Apache Artemis](https://artemis.apache.org/components/artemis/) 
