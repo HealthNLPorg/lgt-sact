@@ -2,11 +2,9 @@ package org.healthnlp.lg.timelines;
 
 import org.apache.ctakes.core.cc.AbstractTableFileWriter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
-import org.apache.ctakes.core.util.annotation.IdentifiedAnnotationUtil;
 import org.apache.ctakes.typesystem.type.refsem.Element;
 import org.apache.ctakes.typesystem.type.relation.TemporalRelation;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
-import org.apache.ctakes.typesystem.type.textsem.TimeMention;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
@@ -15,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.apache.ctakes.core.pipeline.PipeBitInfo.TypeProduct.*;
 import static org.healthnlp.lg.timelines.TimeNormalUtil.TimeNormal;

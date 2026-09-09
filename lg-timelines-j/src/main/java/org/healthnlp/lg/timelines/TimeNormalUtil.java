@@ -50,6 +50,30 @@ final public class TimeNormalUtil {
    }
 
 
+//   /**
+//    *
+//    * @param timeClass time class normalization type (e.g. instant, duration),
+//    * @param timeMentions -
+//    * @return record with normalization type (e.g. instant, duration), normalized value, timex text.
+//    */
+//   static List<TimeNormal> createTimeNormals( final String timeClass, final List<TimeMention> timeMentions ) {
+//      return switch ( timeClass ) {
+//         case FAILED_NORMALIZATION ->
+//               timeMentions.stream().map( t -> new TimeNormal( timeClass, "", "", t ) )
+//                           .distinct().sorted().toList();
+//         case INSTANT ->
+//               timeMentions.stream().map( t -> new TimeNormal( timeClass, getY_M_D_H_m( t ),
+//                                 t.getDate().getTextRepresentation(), t ) )
+//                           .distinct().sorted().toList();
+//         case DURATION ->
+//               timeMentions.stream().map( t -> new TimeNormal( timeClass, getDuration( t ),
+//                                 t.getDuration().getTextRepresentation(), t ) )
+//                           .distinct().sorted().toList();
+//         default -> timeMentions.stream().map( t -> new TimeNormal( timeClass, "-", "-", t ) )
+//                                .distinct().sorted().toList();
+//      };
+//   }
+
    /**
     *
     * @param timeClass time class normalization type (e.g. instant, duration),
@@ -60,17 +84,25 @@ final public class TimeNormalUtil {
       return switch ( timeClass ) {
          case FAILED_NORMALIZATION ->
                timeMentions.stream().map( t -> new TimeNormal( timeClass, "", "", t ) )
-                           .distinct().sorted().toList();
+                           .distinct().sorted( Comparator.comparing(TimeNormal::timeType)
+                                                         .thenComparing( TimeNormal::timeNormal )
+                                                         .thenComparing( TimeNormal::timexSpan ) ).toList();
          case INSTANT ->
                timeMentions.stream().map( t -> new TimeNormal( timeClass, getY_M_D_H_m( t ),
                                  t.getDate().getTextRepresentation(), t ) )
-                           .distinct().sorted().toList();
+                           .distinct().sorted( Comparator.comparing(TimeNormal::timeType)
+                                                         .thenComparing( TimeNormal::timeNormal )
+                                                         .thenComparing( TimeNormal::timexSpan ) ).toList();
          case DURATION ->
                timeMentions.stream().map( t -> new TimeNormal( timeClass, getDuration( t ),
                                  t.getDuration().getTextRepresentation(), t ) )
-                           .distinct().sorted().toList();
+                           .distinct().sorted( Comparator.comparing(TimeNormal::timeType)
+                                                         .thenComparing( TimeNormal::timeNormal )
+                                                         .thenComparing( TimeNormal::timexSpan ) ).toList();
          default -> timeMentions.stream().map( t -> new TimeNormal( timeClass, "-", "-", t ) )
-                                .distinct().sorted().toList();
+                                .distinct().sorted( Comparator.comparing(TimeNormal::timeType)
+                                                              .thenComparing( TimeNormal::timeNormal )
+                                                              .thenComparing( TimeNormal::timexSpan ) ).toList();
       };
    }
 
@@ -144,17 +176,9 @@ final public class TimeNormalUtil {
       return String.format( "%02d", value );
    }
 
-   record TimeNormal( String timeType, String timeNormal, String iso, String timex, String timexSpan )
-         implements Comparable<TimeNormal> {
+   record TimeNormal( String timeType, String timeNormal, String iso, String timex, String timexSpan ) {
       TimeNormal( String timeType, String timeNormal, String iso, TimeMention timex ) {
          this( timeType, timeNormal, iso, timex.getCoveredText(), timex.getBegin()+","+timex.getEnd() );
-      }
-      @Override
-      public int compareTo( TimeNormal other ) {
-         return Comparator.comparing(TimeNormal::timeType)
-                          .thenComparing( TimeNormal::timeNormal )
-                          .thenComparing( TimeNormal::timexSpan )
-                          .compare( this, other );
       }
    }
 
