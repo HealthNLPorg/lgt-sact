@@ -101,7 +101,9 @@ public class MedTimeSpanFileWriter extends AbstractTableFileWriter {
                final List<String> row = Arrays.asList( medNormal, medText, medSpan, relation,
                      timeNormal.timeNormal(), timeNormal.timex(), timeNormal.timexSpan(),
                      timeNormal.timeType(), timeNormal.iso() );
-               rows.add( row );
+               if ( !rows.contains( row ) ) {
+                  rows.add( row );
+               }
             }
          }
       }
