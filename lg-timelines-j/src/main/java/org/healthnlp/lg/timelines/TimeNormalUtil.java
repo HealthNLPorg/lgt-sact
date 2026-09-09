@@ -5,6 +5,7 @@ import org.apache.ctakes.typesystem.type.relation.TemporalRelation;
 import org.apache.ctakes.typesystem.type.textsem.TimeMention;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -143,9 +144,17 @@ final public class TimeNormalUtil {
       return String.format( "%02d", value );
    }
 
-   record TimeNormal( String timeType, String timeNormal, String iso, String timex, String timexSpan ) {
+   record TimeNormal( String timeType, String timeNormal, String iso, String timex, String timexSpan )
+         implements Comparable<TimeNormal> {
       TimeNormal( String timeType, String timeNormal, String iso, TimeMention timex ) {
          this( timeType, timeNormal, iso, timex.getCoveredText(), timex.getBegin()+","+timex.getEnd() );
+      }
+      @Override
+      public int compareTo( TimeNormal other ) {
+         return Comparator.comparing(TimeNormal::timeType)
+                          .thenComparing( TimeNormal::timeNormal )
+                          .thenComparing( TimeNormal::timexSpan )
+                          .compare( this, other );
       }
    }
 
