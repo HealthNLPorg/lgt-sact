@@ -29,9 +29,9 @@ import static org.apache.ctakes.core.pipeline.PipeBitInfo.TypeProduct.*;
  */
 @PipeBitInfo (
       name = "MedTimeJsonFileWriter",
-      description = "Writes medication temporal relations in a json file.",
+      description = "Writes concept-level medication temporal relations in a json file.",
       role = PipeBitInfo.Role.WRITER,
-      dependencies = { DOCUMENT_ID, IDENTIFIED_ANNOTATION, TIMEX, TEMPORAL_RELATION },
+      dependencies = { DOCUMENT_ID, TEMPORAL_RELATION },
       usables = { DOCUMENT_ID_PREFIX }
 )
 public class MedTimeJsonFileWriter extends AbstractFileWriter<Collection<MedTimeJsonFileWriter.MedTLink>> {

@@ -2,9 +2,11 @@ package org.healthnlp.lg.timelines;
 
 import org.apache.ctakes.core.cc.AbstractTableFileWriter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
+import org.apache.ctakes.core.util.annotation.IdentifiedAnnotationUtil;
 import org.apache.ctakes.typesystem.type.refsem.Element;
 import org.apache.ctakes.typesystem.type.relation.TemporalRelation;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
+import org.apache.ctakes.typesystem.type.textsem.TimeMention;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.ctakes.core.pipeline.PipeBitInfo.TypeProduct.*;
 import static org.healthnlp.lg.timelines.TimeNormalUtil.TimeNormal;
@@ -24,20 +27,21 @@ import static org.healthnlp.lg.timelines.TimeNormalUtil.TimeNormal;
  * @since {3/20/2026}
  */
 @PipeBitInfo (
-      name = "MedTimeMentionFileWriter",
-      description = "Writes mention-level medication temporal relations in a table file.",
+      name = "MedTimeSpanFileWriter",
+      description = "Writes mention-level medication temporal relations and spans in a table file.",
       role = PipeBitInfo.Role.WRITER,
       dependencies = { DOCUMENT_ID, IDENTIFIED_ANNOTATION, TIMEX, TEMPORAL_RELATION },
       usables = { DOCUMENT_ID_PREFIX }
 )
-public class MedTimeMentionFileWriter extends AbstractTableFileWriter {
+public class MedTimeSpanFileWriter extends AbstractTableFileWriter {
    // If you do not need to utilize the entire cas, or need more than the doc cas, consider AbstractFileWriter<T>.
-   static private final Logger LOGGER = LoggerFactory.getLogger( "MedTimeMentionFileWriter" );
+   static private final Logger LOGGER = LoggerFactory.getLogger( "MedTimeSpanFileWriter" );
 
 
    static private final List<String> HEADER
-         = Arrays.asList( " Medication ", " Temporal Relation ", " TimeNorm ISO ", " Normalized Time ",
-         " Temporal Expression ", " Snippet " );
+         = Arrays.asList( " Medication Normal ", " Medication Text ", " Medication Span ",
+         " Temporal Relation ",
+         " Normalized Time ", " Time Text ", " Time Span ", " Time Type ", " TimeNorm ISO "  );
 
 
    /**
@@ -45,7 +49,7 @@ public class MedTimeMentionFileWriter extends AbstractTableFileWriter {
     */
    @Override
    protected File getOutputFile( String outputDir, String documentId, String fileName) {
-      return new File(outputDir, documentId + "_medTimeMentions." + getTableType().name().toLowerCase());
+      return new File(outputDir, documentId + "_medTimeSpans." + getTableType().name().toLowerCase());
    }
 
    /**
@@ -72,37 +76,6 @@ public class MedTimeMentionFileWriter extends AbstractTableFileWriter {
                      .toList();
    }
 
-   /**
-    *
-    * @param jCas ye olde ...
-    * @param med annotation for medication.
-    * @param time annotation for time.
-    * @return the text between and including the two mentions.
-    */
-   static private String getSnippet( final JCas jCas, final IdentifiedAnnotation med, final IdentifiedAnnotation time ) {
-      final int begin = Math.min( med.getBegin(), time.getBegin() );
-      final int end = Math.max( med.getEnd(), time.getEnd() );
-      return jCas.getDocumentText().substring( begin, end );
-   }
-
-   /**
-    *
-    * @param jCas ye olde ...
-    * @param tlink temporal relation between medication and time.
-    * @return MentionText records containing covered text and covered snippets.
-    */
-   static private List<MentionText> getMentionTexts( final JCas jCas, final TemporalRelation tlink ) {
-      final List<IdentifiedAnnotation> meds = getMentions( tlink.getArg1() );
-      final List<IdentifiedAnnotation> times = getMentions( tlink.getArg2() );
-      final List<MentionText> mentionTexts = new ArrayList<>();
-      for ( IdentifiedAnnotation med : meds ) {
-         for ( IdentifiedAnnotation time : times ) {
-            mentionTexts.add(
-                  new MentionText( med.getCoveredText(), time.getCoveredText(), getSnippet( jCas, med, time ) ) );
-         }
-      }
-      return mentionTexts;
-   }
 
    /**
     * {@inheritDoc}
@@ -113,28 +86,29 @@ public class MedTimeMentionFileWriter extends AbstractTableFileWriter {
       if ( tRels == null || tRels.isEmpty() ) {
          return Collections.emptyList();
       }
+      // Sort rows by Normalized Med, followed by Relation Type
       final List<TemporalRelation> tlinks = tRels.stream()
-                                                 .sorted( Comparator.comparing(TimeNormalUtil.getMed )
+                                                 .sorted( Comparator.comparing( TimeNormalUtil.getMed )
                                                                     .thenComparing( TemporalRelation::getCategory ) )
                                                  .toList();
       final List<List<String>> rows = new ArrayList<>();
       for ( TemporalRelation tlink : tlinks ) {
-         final String med = TimeNormalUtil.getMed.apply( tlink );
+         final String medNormal = TimeNormalUtil.getMed.apply( tlink );
          final String relation = tlink.getCategory();
+         final List<IdentifiedAnnotation> meds = getMentions( tlink.getArg1() );
          final List<TimeNormal> typeTimeNormals = TimeNormalUtil.createTimeNormals( tlink );
-         for ( TimeNormal timeNormal : typeTimeNormals ) {
-            rows.add( Arrays.asList( med, relation, timeNormal.iso(), timeNormal.timeNormal(), timeNormal.timex(), "" ) );
-            final List<MentionText> mentionTexts = getMentionTexts( jCas, tlink );
-            mentionTexts.forEach( m -> rows.add( m.getRow() ) );
+         for ( IdentifiedAnnotation med : meds ) {
+            final String medText = med.getCoveredText();
+            final String medSpan = med.getBegin()+","+med.getEnd();
+            for ( TimeNormal timeNormal : typeTimeNormals ) {
+               final List<String> row = Arrays.asList( medNormal, medText, medSpan, relation,
+                     timeNormal.timeNormal(), timeNormal.timex(), timeNormal.timexSpan(),
+                     timeNormal.timeType(), timeNormal.iso() );
+               rows.add( row );
+            }
          }
       }
       return rows;
-   }
-
-   private record MentionText( String med, String time, String snippet ) {
-      private List<String> getRow() {
-         return Arrays.asList( med, "", "", "", time, snippet );
-      }
    }
 
 

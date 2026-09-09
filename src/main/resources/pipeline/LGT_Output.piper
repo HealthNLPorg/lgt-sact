@@ -16,5 +16,7 @@ add MedTimeTableFileWriter
 // The MedTimeMentionFileWriter can be useful for debugging, but is not used in a normal workflow
 //add MedTimeMentionFileWriter
 
+add MedTimeSpanFileWriter TableType=BSV
+
 // Perform steps to stop the pbj pipeline, including stopping the Artemis broker
 load PbjStopper

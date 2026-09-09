@@ -26,7 +26,7 @@ A smaller GPU will run with 4-bit quantization and reduced accuracy.
 1. [Install Apache Maven](https://maven.apache.org/install.html)
 
 ### Installing Apache Artemis
-1. [Install Apaceh Artemis](https://artemis.apache.org/components/artemis/documentation/latest/using-server.html#installation)
+1. [Install Apache Artemis](https://artemis.apache.org/components/artemis/documentation/latest/using-server.html#installation)
 2. [Create a Broker](https://artemis.apache.org/components/artemis/documentation/latest/using-server.html#creating-a-broker-instance)
 
 

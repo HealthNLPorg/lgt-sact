@@ -22,9 +22,9 @@ import static org.healthnlp.lg.timelines.TimeNormalUtil.TimeNormal;
  */
 @PipeBitInfo (
       name = "MedTimeTableFileWriter",
-      description = "Writes medication temporal relations in a table file.",
+      description = "Writes concept-level medication temporal relations in a table file.",
       role = PipeBitInfo.Role.WRITER,
-      dependencies = { DOCUMENT_ID, IDENTIFIED_ANNOTATION, TIMEX, TEMPORAL_RELATION },
+      dependencies = { DOCUMENT_ID, TEMPORAL_RELATION },
       usables = { DOCUMENT_ID_PREFIX }
 )
 public class MedTimeTableFileWriter extends AbstractTableFileWriter {
